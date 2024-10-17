@@ -1,0 +1,32 @@
+[
+{
+  "directory": "D:/GitHub/Archiver-HSE-Project/build/src",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe   -g -std=gnu++20 -o CMakeFiles\\archiver.dir\\archiver.cpp.obj -c D:\\GitHub\\Archiver-HSE-Project\\src\\archiver.cpp",
+  "file": "D:/GitHub/Archiver-HSE-Project/src/archiver.cpp",
+  "output": "src/CMakeFiles/archiver.dir/archiver.cpp.obj"
+},
+{
+  "directory": "D:/GitHub/Archiver-HSE-Project/build/src",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe   -g -std=gnu++20 -o CMakeFiles\\archiver.dir\\archive.cpp.obj -c D:\\GitHub\\Archiver-HSE-Project\\src\\archive.cpp",
+  "file": "D:/GitHub/Archiver-HSE-Project/src/archive.cpp",
+  "output": "src/CMakeFiles/archiver.dir/archive.cpp.obj"
+},
+{
+  "directory": "D:/GitHub/Archiver-HSE-Project/build/src",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe   -g -std=gnu++20 -o CMakeFiles\\archiver.dir\\dearchive.cpp.obj -c D:\\GitHub\\Archiver-HSE-Project\\src\\dearchive.cpp",
+  "file": "D:/GitHub/Archiver-HSE-Project/src/dearchive.cpp",
+  "output": "src/CMakeFiles/archiver.dir/dearchive.cpp.obj"
+},
+{
+  "directory": "D:/GitHub/Archiver-HSE-Project/build/src",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe   -g -std=gnu++20 -o CMakeFiles\\archiver.dir\\utilities.cpp.obj -c D:\\GitHub\\Archiver-HSE-Project\\src\\utilities.cpp",
+  "file": "D:/GitHub/Archiver-HSE-Project/src/utilities.cpp",
+  "output": "src/CMakeFiles/archiver.dir/utilities.cpp.obj"
+},
+{
+  "directory": "D:/GitHub/Archiver-HSE-Project/build/src",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe   -g -std=gnu++20 -o CMakeFiles\\archiver.dir\\binary_trie.cpp.obj -c D:\\GitHub\\Archiver-HSE-Project\\src\\binary_trie.cpp",
+  "file": "D:/GitHub/Archiver-HSE-Project/src/binary_trie.cpp",
+  "output": "src/CMakeFiles/archiver.dir/binary_trie.cpp.obj"
+}
+]
