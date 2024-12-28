@@ -1,38 +1,25 @@
 #pragma once
 
+#include "constants.h"
+
+#include <algorithm>
 #include <cstdint>
 #include <fstream>
 #include <unordered_map>
 #include <vector>
-#include <iostream>
 
-#include "bit_istream.h"
+char ReverseChar(char);
 
-constexpr int16_t FILENAME_END = 256;
-constexpr int16_t ONE_MORE_FILE = 257;
-constexpr int16_t ARCHIVE_END = 258;
+int16_t CharToInt16(char);
 
-template<typename T> 
-std::ostream& operator << (std::ostream& out, std::vector<T> a) {
+template <typename T>
+std::ostream& operator<<(std::ostream& out, std::vector<T> a) {
     for (auto el : a) {
         out << el << " ";
     }
     return out;
 }
 
-std::unordered_map<int16_t, int32_t> GetSymbolsFrequency(const char*);
+std::unordered_map<int16_t, int64_t> GetSymbolsFrequency(std::string);
 
-class Byte9 {
-public:
-    Byte9(int16_t);
-    ~Byte9() = default;
-    std::vector<bool> Get();
-    template<typename T>
-    void Read(BitIstream<T>& in) {
-        for (int i = 0; i < number.size(); i++) {
-            number[i] = in.Get();
-        }
-    }
-private:
-    std::vector<bool> number;
-};
+std::unordered_map<int16_t, std::vector<bool>> GetNormalCode(const std::vector<std::pair<size_t, int16_t>>&);

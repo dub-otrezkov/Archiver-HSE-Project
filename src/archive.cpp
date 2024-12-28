@@ -1,82 +1,80 @@
 #include "archive.h"
-#include "utilities.h"
 #include "binary_trie.h"
 #include "bit_ostream.h"
+#include "custom_byte.h"
+#include "utilities.h"
+
 #include <iostream>
 
 void Archive(const char* target, const std::vector<const char*>& filenames) {
-    BitOstream<std::ofstream> out(target);
+    BitOstream<std::ofstream> out((std::string(target)).c_str());
 
-    for (int filename_index = 0; filename_index < filenames.size(); filename_index++) {
-        std::unordered_map<int16_t, int32_t> frequency = GetSymbolsFrequency(filenames[filename_index]);
-        BinaryTrie trie;
-        trie.BuildHaffman
-        (frequency);
-        std::unordered_map<int16_t, size_t> codes_lengths = trie.GetCodes();
+    for (size_t filename_index = 0; filename_index < filenames.size(); ++filename_index) {
+        std::string path = static_cast<std::string>(filenames[filename_index]);
+        if (!std::filesystem::exists(path)) {
+            throw std::runtime_error("file search failed " + path + " " + std::filesystem::current_path().string());
+        }
+
+        std::unordered_map<int16_t, int64_t> frequency = GetSymbolsFrequency(path.c_str());
+        BinaryTrie trie(frequency);
+        std::unordered_map<int16_t, size_t> codes_lengths = trie.GetLengthOfCodes();
         std::vector<std::pair<size_t, int16_t>> codes_to_sort;
-        for (const std::pair<int16_t, size_t>& element : codes_lengths) {
+        for (std::pair<int16_t, size_t> element : codes_lengths) {
             codes_to_sort.push_back(std::make_pair(element.second, element.first));
         }
         std::sort(codes_to_sort.begin(), codes_to_sort.end());
-        int current_pos = 0;
 
-        std::unordered_map<int16_t, std::vector<bool>> codes;
-        codes[codes_to_sort[0].second] = std::vector<bool>(codes_to_sort[0].first, false);
-        for (int i = 1; i < codes_to_sort.size(); i++) {
-            codes[codes_to_sort[i].second] = codes[codes_to_sort[i - 1].second];
-            for (int bit = 0; bit < codes_to_sort[i].first; bit++) {
-                codes[codes_to_sort[i].second][bit] = !codes[codes_to_sort[i].second][bit];
-                if (codes[codes_to_sort[i].second][bit]) {
-                    break;
-                }
+        std::unordered_map<int16_t, std::vector<bool>> codes = GetNormalCode(codes_to_sort);
+
+        out.Write(CustomByte(OutputIntegersBase, static_cast<int16_t>(codes.size())).Get());
+
+        for (size_t i = 0; i < codes_to_sort.size(); i++) {
+            out.Write(CustomByte(OutputIntegersBase, codes_to_sort[i].second).Get());
+        }
+        size_t next_length_to_check = 0;
+
+        for (size_t i = 0; i < codes_to_sort.back().first; i++) {
+            int16_t count_of_i_length = 0;
+            for (; next_length_to_check < codes_to_sort.size() && codes_to_sort[next_length_to_check].first == i + 1;
+                 count_of_i_length++, next_length_to_check++) {
             }
-            for (; codes[codes_to_sort[i].second].size() < codes_to_sort[i].first;) {
-                codes[codes_to_sort[i].second].insert(codes[codes_to_sort[i].second].begin(), false);
-            }
+            out.Write(CustomByte(OutputIntegersBase, count_of_i_length).Get());
         }
 
-        // for (auto [f, s] : codes) {
-        //     std::cout << f << " " << (char) f << ": ";
-        //     for (auto i : s) std::cout << i;
-        //     std::cout << "\n";
-        // }
-
-        out.Write(Byte9(codes.size()).Get());
-
-        int j = 0;
-
-        for (int i = 0; i < codes_to_sort.back().first; i++) {
-            int cnt = 0;
-            for (; j < codes_to_sort.size() && codes_to_sort[j].first == i + 1; cnt++, j++) {
-            }
-            out.Write(Byte9(cnt).Get());
+        std::string name;
+        ssize_t filename_size = path.end() - path.begin();
+        for (ssize_t i = filename_size - 1; i >= 0 && filenames[filename_index][i] != '/'; i--) {
+            name += filenames[filename_index][i];
         }
-        for (int i = 0; i < codes_to_sort.size(); i++) {
-            out.Write(Byte9(codes_to_sort[i].second).Get());
-        }
-        for (int i = 0; filenames[filename_index][i] != '\0'; i++) {
-            out.Write(codes[filenames[filename_index][i]]);
-        }
-        out.Write(codes[FILENAME_END]);
+        std::reverse(name.begin(), name.end());
 
-        std::ifstream file(filenames[filename_index]);
+        for (char symbol : name) {
+            out.Write(codes[CharToInt16(symbol)]);
+        }
+        out.Write(codes[FilenameEnd]);
+
+        std::ifstream file(path, std::fstream::binary);
+
+        if (!file.is_open()) {
+            throw std::runtime_error("no such file");
+        }
+
         for (;;) {
             file.peek();
             if (file.eof()) {
                 break;
             }
 
-            char x;
-            file.get(x);
+            char symbol = 0;
+            file.get(symbol);
 
-            // std::cout << (char) x << " " << codes[x] << "\n";
-            out.Write(codes[x]);
+            out.Write(codes[CharToInt16(symbol)]);
         }
 
         if (filename_index + 1 == filenames.size()) {
-            out.Write(codes[ARCHIVE_END]);
+            out.Write(codes[ArchiveEnd]);
         } else {
-            out.Write(codes[ONE_MORE_FILE]);
+            out.Write(codes[OneMoreFile]);
         }
     }
 }

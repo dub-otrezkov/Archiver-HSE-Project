@@ -1,18 +1,17 @@
 add_executable(
-    archiver
-    archiver.cpp
-    archive.h
-    archive.cpp
-    dearchive.h
-    dearchive.cpp
-    utilities.h
-    utilities.cpp
-    binary_trie.h
-    binary_trie.cpp
-    bit_ostream.h
-    bit_istream.h
-    hello.txt
+        archiver
+        archiver.cpp
+        bit_istream.h
+        bit_ostream.h
+        utilities.cpp
+        utilities.h
+        heap.h
+        binary_trie.cpp
+        binary_trie.h
+        archive.cpp
+        archive.h
+        dearchive.cpp
+        dearchive.h
+        custom_byte.cpp
+        custom_byte.h
 )
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/hello.txt
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

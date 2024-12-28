@@ -1,0 +1,10 @@
+add_catch(
+    archiver_tests
+    tests.cpp
+    ../src/heap.h
+    ../src/bit_istream.h
+    ../src/binary_trie.h
+    ../src/binary_trie.cpp
+    ../src/utilities.h
+    ../src/utilities.cpp
+)
